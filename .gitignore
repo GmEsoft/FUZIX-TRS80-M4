@@ -1,9 +1,9 @@
 /Fuzix/build
 /Fuzix/zmac
-
-/Fuzix/*.exe
 /Fuzix/*.hd
 /Fuzix/*.bin
 /Fuzix/*.obj
 /Fuzix/*.jv3
 /Fuzix/fuzix003
+/Fuzix/*.zip
+*.exe
