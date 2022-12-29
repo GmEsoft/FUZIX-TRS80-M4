@@ -7,7 +7,7 @@
 $PCRTC	EQU	0			;Disable CRTC initialization
 $PRAM94	EQU	0			;Disable Port 94 RAM expansion
 $PVPAGE	EQU	1			;Fix Video Page Bug
-$PSRINT	EQU	1			;Disable serial interrupts (defective UART)
+$PSRINT	EQU	0			;Disable serial interrupts (defective UART)
 $P1HARD	EQU	0			;Use only 1 hard drive
 $PWOTIR	EQU	1			;Fix missing wait ready loop after OTIR
 
