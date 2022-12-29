@@ -1,10 +1,10 @@
 # FUZIX-TRS80-M4
 
-Patch for Fuzix to run on real TRS-80 Model 4(p), with FreHD autoboot
+Patch for Fuzix v0.3 to run on real TRS-80 Model 4(p), with FreHD autoboot
 
 ## Description
 
-This is a patch to address 2 bugs in Fuzix release 0.3 for the TRS-80 Model 4-4p.
+This is a patch to address 2 bugs in the official distribution of Fuzix release 0.3 for the TRS-80 Model 4-4p, to allow Fuzix to run on real hardware.
 
 The first bug is a bad initialization of the CRT controller, causing the 2 1K video pages to be swapped.
 
