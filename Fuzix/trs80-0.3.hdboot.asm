@@ -1,6 +1,8 @@
-;** Fuzix Hard Disk Boot Sector - (c) 2020 GmEsoft, All rights reserved. **
+;** Fuzix Hard Disk Boot Sector - (c) 2020-23 GmEsoft, All rights reserved. **
 ;
-;	Thu Dec 17 2020
+;	Thu Dec 17 2022		Initial
+;	Sat Jan 21, 2023	Fixed missing DI preventing from booting
+;				from Model 4 with FreHD
 
 CLSLEN	EQU	07FFH
 M4BOOT	EQU	4300H
@@ -18,12 +20,14 @@ SYSCYL	EQU	202		;Cylinder holding the kernel binary
 	ORG	0000H
 
 	;entry point 4300H - move to page 0
-BOOT	LD	A,86H		;OPREG = 80x24 video, memory map 2
+BOOT	DI			;Required when booting from M4+FreHD!
+	LD	A,86H		;OPREG = 80x24 video, memory map 2
 	OUT	(84H),A		;  KI and DO mapped in high memory
 	LD	A,50H		;MODOUT = Fast, Enable ext I/O
 	OUT	(0ECH),A	;
 	LD	HL,M4BOOT	;Boot sector address in memory
-	LD	DE,BOOT		;entry point 4300H - move to page 0
+	LD	D,L		;entry point 4300H - move to page 0
+	LD	E,L		;
 	LD	BC,ORIGIN	;Boot sector length = system origin
 	LDIR			;Copy
 	JP	BOOT1		;entry point after move to page 0
@@ -56,7 +60,7 @@ LCRTC	OUT	(C),B		;select register
 
 	LD	DE,0C601H	;D = #sectors; E = sector
 ;	LD	DE,0C701H	;D = #sectors; E = sector
-	LD	BC,00C8H	;B = sec length (156); C = HDC data
+	LD	BC,00C8H	;B = sec length (256); C = HDC data
 
 	XOR	A		;init HDC Drive & Head
 	EX	AF,AF'		;save
