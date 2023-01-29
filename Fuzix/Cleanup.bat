@@ -1,6 +1,4 @@
 @echo off
-call :del *.zip
-call :del *.exe
 call :del *.dasm
 call :del *.prn
 call :del *.obj
@@ -14,13 +12,12 @@ call :del *.bin
 call :del *.obj
 call :del *.bak
 call :del *.out
-call :del *.hd
-call :del *.jv3
+call :del *.hd????.hd
+call :del *.fix.hd
 call :del std???.txt
 call :del fuzix???
 call :rmdir build
 call :rmdir zmac
-call :rmdir windows
 goto :eof
 
 :del

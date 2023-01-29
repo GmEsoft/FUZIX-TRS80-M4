@@ -7,7 +7,9 @@
 #include <fcntl.h>    // O_RDWR...
 #include <sys/stat.h> // S_IWRITE
 
-#define HARDDISK "Hard Disk Image Converter V0.1, (C) 2020 by GmEsoft"
+#define HARDDISK "Hard Disk Image Converter v0.2, (C) 2020-23 by GmEsoft"
+
+#define TRACE 0
 
 typedef unsigned int uint32_t;
 
@@ -47,6 +49,7 @@ unsigned char buf[SEC_LEN];
 int sector0;
 int tracks=0, sectors=0, sides=0;
 int psector1=0, psides=1, ptracks=0, psectors=0, pnsectors=0;
+int ptrack0=0, psector0=0;
 int pbeghead=0, pendhead=-1, pheads, ptrksidorder=0;
 int eofsector=-1;
 
@@ -120,18 +123,30 @@ void getparams( int infile )
 	{
 		pendhead = sides - 1;
 	}
+	printf( "computed params: sides(heads)=%d, pendhead=%d, sectors(sects/trk)=%d\n", sides, pendhead, sectors );
 }
 
 void setparams()
 {
 	pheads = pendhead - pbeghead + 1;
-	if ( psectors )
-		psectors -= psector1;
-	sector0 = ( ptracks * ( ptrksidorder ? ( sectors * sides ) : sectors ) + psectors );
-	if ( !pnsectors )
+#if TRACE
+	printf( "ptrack0=%d psector0=%d psector1:=%d\n", ptrack0, psector0, psector1 );
+#endif
+	if ( psector0 )
+		psector0 -= psector1;
+	sector0 = ( ptrack0 * ( ptrksidorder ? ( sectors * sides ) : sectors ) + psector0 );
+#if TRACE
+	printf( "sector0=%d\n", sector0 );
+#endif
+	if ( !pnsectors ) {
 		pnsectors = ( ptracks ? ptracks : tracks ) * sectors * pheads - sector0;
-	printf( "- setparams: pheads=%d psectors=%d sector0=%d pnsectors=%d\n",
-		pheads, psectors, sector0, pnsectors );
+#if TRACE
+		printf( "pnsectors=%d := ( ptracks=%d ? ptracks : tracks=%d ) * sectors=%d * pheads=%d - sector0=%d\n",
+			pnsectors, ptracks, tracks, sectors, pheads, sector0 );
+#endif
+	}
+	printf( "- setparams: pheads=%d psectors=%d sector0=%d pnsectors=%d ptracks=%d sectors=%d\n",
+		pheads, psectors, sector0, pnsectors, ptracks ? ptracks : tracks, sectors );
 }
 
 int getvhdsec( int nsec )
@@ -204,10 +219,13 @@ void extract( int infile, int outfile )
 	{
 		int nbytes;
 		int sec = getvhdsec( i );
-
 		lseek( infile, offset + 0x100 * sec, SEEK_SET );
 
 		nbytes = read( infile, buf, SEC_LEN );
+
+#if TRACE
+		printf("I:%d O:%d B:%d\t", i, offset + 0x100 * sec, nbytes );
+#endif
 
 		if ( nbytes < SEC_LEN )
 		{
@@ -216,6 +234,13 @@ void extract( int infile, int outfile )
 			{
 				eofsector = i;
 				printf( "Reading Past EOF\n" );
+			}
+
+			if (!pnsectors)
+			{
+				// Break if EOF and no limit on number of sectors
+				write( outfile, buf, SEC_LEN );
+				break;
 			}
 		}
 
@@ -260,6 +285,13 @@ void create( int infile, int outfile, int update )
 			{
 				eofsector = i;
 				printf( "Reading Past EOF\n" );
+			}
+
+			if (!pnsectors)
+			{
+				// Break if EOF and no limit on number of sectors
+				write( outfile, buf, SEC_LEN );
+				break;
 			}
 		}
 
@@ -376,9 +408,16 @@ int main( int argc, char* argv[] )
 		create( infile, outfile, 0 );
 		break;
 	case 'U':
+		ptrack0 = ptracks;
+		psector0 = psectors;
+		ptracks = psectors = 0;
 		create( infile, outfile, 1 );
 		break;
 	case 'X':
+		ptrack0 = ptracks;
+		psector0 = psectors;
+		ptracks = psectors = 0;
+		//analyze( infile );
 		extract( infile, outfile );
 		break;
 	}

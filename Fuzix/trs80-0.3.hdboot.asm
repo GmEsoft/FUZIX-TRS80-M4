@@ -1,4 +1,4 @@
-;** Fuzix Hard Disk Boot Sector - (c) 2020-23 GmEsoft, All rights reserved. **
+;** Fuzix Hard Disk Boot Sector for Model 4(p) - (c) 2020-23 GmEsoft, All rights reserved. **
 ;
 ;	Thu Dec 17 2022		Initial
 ;	Sat Jan 21, 2023	Fixed missing DI preventing from booting
@@ -26,34 +26,24 @@ BOOT	DI			;Required when booting from M4+FreHD!
 	LD	A,50H		;MODOUT = Fast, Enable ext I/O
 	OUT	(0ECH),A	;
 	LD	HL,M4BOOT	;Boot sector address in memory
-	LD	D,L		;entry point 4300H - move to page 0
-	LD	E,L		;
+	LD	DE,BOOT		;entry point 4300H - move to page 0
 	LD	BC,ORIGIN	;Boot sector length = system origin
 	LDIR			;Copy
 	JP	BOOT1		;entry point after move to page 0
 
-	;CRTC initilization data (registers 01 to 0F; 00 not written)
-	DB	    50H,55H,0AH
-	DB	19H,04H,18H,18H
-	DB	00H,09H,65H,09H
-	DB	00H,00H,00H,00H
-	;CRTC registers values end
-CRTC$	EQU	$-1
+	ASSERT	$ <= 18H	;must be less than RST 18H vector
 
-	;entry point after move to page 0
-BOOT1	LD	SP,STACK
+	ORG	18H		;RST 18H vector
+	JP	DMSG		;avoid a CALL in page 0 for 4p:
+				; would cause a MODELA/III load
 
-	;load CRTC registers
-	LD	HL,CRTC$	;CRTC registers values last byte
-	LD	BC,0F88H	;B=CRTC register - C=CRTC address port
-LCRTC	OUT	(C),B		;select register
-	LD	A,(HL)		;load register value from table
-	OUT	(89H),A		;send value to CRTC register
-	DEC	HL		;previous byte in table
-	DJNZ	LCRTC		;repeat until CRTC register #1
-
+BOOT2	EXX
+	LD	HL,HELLO	;Say HELLO!
+	LD	DE,(HELLO-HELLOX)/2+M4VID+920 ;Center of the screen
+	RST	18H		;display message
 	LD	HL,'LD'		;"LD" = loading
 	LD	(M4VID+4EH),HL	;on screen
+	EXX
 
 	EX	DE,HL		;HL = ORIGIN
 	PUSH	HL		;push ret address
@@ -98,11 +88,53 @@ SAMETRK	DEC	D		;next 256-bytes block
 
 	LD	HL,'BT'		;"BT" = booting
 	LD	(M4VID+4EH),HL	;on screen
+
+	LD	HL,00C0H	;clear 00C0-00FF
+CLR00C0	LD	(HL),H
+	INC	L
+	JR	NZ,CLR00C0
 	RET			;Transfer to origin
 
 ERROR	LD	HL,'ER'		;"ER" = error
 ABEND	LD	(M4VID+4EH),HL	;on screen
 	HALT			;stop
+
+	ASSERT	$ <= 80H	;must be less than 80H
+
+	ORG	0C0H		;
+
+	;CRTC initilization data (registers 01 to 0F; 00 not written)
+	DB	    50H,55H,0AH
+	DB	19H,04H,18H,18H
+	DB	00H,09H,65H,09H
+	DB	00H,00H,00H,00H
+	;CRTC registers values end
+CRTC$	EQU	$-1
+
+	;entry point after move to page 0
+BOOT1	LD	SP,STACK
+
+	;load CRTC registers
+	LD	HL,CRTC$	;CRTC registers values last byte
+	LD	BC,0F88H	;B=CRTC register - C=CRTC address port
+LCRTC	OUT	(C),B		;select register
+	LD	A,(HL)		;load register value from table
+	OUT	(89H),A		;send value to CRTC register
+	DEC	HL		;previous byte in table
+	DJNZ	LCRTC		;repeat until CRTC register #1
+	JP	BOOT2		;continue in low 128 bytes
+
+	;Display a message at HL to DE (pointing to video memory)
+DMSG	LD	A,(HL)		;get char
+	OR	A		;check if NUL
+	RET	Z		;ret if yes
+	LDI			;put on screen
+	JR	DMSG		;next char
+
+HELLO	DB	'Fuzix HDBoot v0.3.3'
+HELLOX	DB	0
+
+	ASSERT	$ <= 100H	;must be less than 100H
 
 	ORG	0100H
 	;system origin
