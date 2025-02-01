@@ -14,9 +14,9 @@ Another change is the addition of a hard disk loader, to load the bootloader ori
 
 ## Build
 
-- First, download and decompress the original Fuzix floppy and hard disk images https://www.fuzix.org/downloads/0.3/trs80-0.3.jv3.gz and https://www.fuzix.org/downloads/0.3/trs80-0.3.hd.gz . This can be done by running the scriot `getfuzix.sh`.
+- First, download and decompress the original Fuzix floppy and hard disk images https://www.fuzix.org/downloads/0.3/trs80-0.3.jv3.gz and https://www.fuzix.org/downloads/0.3/trs80-0.3.hd.gz . This can be done by running the script `getfuzix.sh`.
 
-- Download ZMAC from http://48k.ca/zmac.zip . This will be used to build the new Hard Disk boot sector from `trs80-0.3.hdboot.asm` and the patched Fuzix system core from `trs80-0.3.sys.asm`.
+- Download ZMAC from http://48k.ca/zmac.zip . This will be used to build the new Hard Disk boot sector from `trs80-0.3.hdboot.asm` and the patched Fuzix system core from `trs80-0.3.sys.asm`. This can be done by running the script `getzmac.sh`.
 
 - Build the utilities `HardDisk.exe`, `JV3Disk.exe` and `Patch.exe` from the C source files, using Visual Studio and the scripts `mk_HardDisk.exe`, `mk_JV3Disk.exe` and `mk_Patch.exe`. It may be necessary to adapt `vcvars32.bat` for your particular installation of Visual Studio.
 
