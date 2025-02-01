@@ -10,16 +10,16 @@
 ;=====	Patch activation flags
 $PCRTC	EQU	0			;Disable CRTC initialization
 $PRAM94	EQU	0			;Disable Port 94 RAM expansion
-$PVPAGE	EQU	1			;Fix Video Page Bug (mandatory)
+$PVPAGE	EQU	1			;Fix Video Page Bug (MANDATORY)
 $PSRINT	EQU	0			;Disable serial interrupts (if defective UART)
 $P1HARD	EQU	0			;Use only 1 hard drive
-$PWOTIR	EQU	1			;Fix missing wait ready loop after OTIR (mandatory on real machines)
+$PWOTIR	EQU	1			;Fix missing wait ready loop after OTIR (MANDATORY on real machines)
 
 
 ;=====	original kernel binary
 	ORG	0100H
 
-	INCBIN	trs80-0.3.sys.bin	;original boot sector
+	INCBIN	trs80-0.3.sys.bin	;original kernel binary
 
 ;=====	patches
 ;-----	skip CRTC initialization
