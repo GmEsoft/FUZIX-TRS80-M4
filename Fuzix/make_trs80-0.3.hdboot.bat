@@ -5,14 +5,32 @@ set FUZIXBOOT=%FUZIX%.boot
 set FUZIXHDBOOT=%FUZIX%.hdboot
 set FUZIXHDSYS=%FUZIX%.sys
 
+if exist %FUZIX%.hd goto FUZIX_HD_OK
+echo :: Downloading %FUZIX%.hd ::
+getfuzix.sh
+if errorlevel 1 pause && goto :eof
+:FUZIX_HD_OK
+
 echo :: Creating the new hard disk image %FUZIXHDBOOT%.hd from %FUZIX%.hd ::
 copy %FUZIX%.hd %FUZIXHDBOOT%.hd
+
+if exist PATCH.EXE goto PATCH_OK
+echo :: Building PATCH.EXE ::
+call mk_Patch.bat
+if errorlevel 1 pause && goto :eof
+:PATCH_OK
 
 echo :: Making the hard disk natively bootable,                                 ::
 echo :: Adding a cylinder at the end for the secondary bootstrap (floppy image) ::
 patch %FUZIXHDBOOT%.hd (D0x08=01;F0x08=00;D0x0B=02;F0x0B=00;D0x1C=CB;F0x1C=CA;D0x1D=00;F0x1D=00)
 ::                      Autoboot ON       Native boot       One more cylinder
 if errorlevel 1 pause && goto :eof
+
+if exist HARDDISK.EXE goto HARDDISK_OK
+echo :: Building HARDDISK.EXE ::
+call mk_HardDisk.bat
+if errorlevel 1 pause && goto :eof
+:HARDDISK_OK
 
 ::HardDisk -X -1 -H:* -I:%FUZIXHDBOOT%.hd -O:%FUZIX%.fix.img
 echo :: Analyzing new hard disk image ::
@@ -23,6 +41,12 @@ if errorlevel 1 pause && goto :eof
 echo :: Extracting first sector from hard disk image ::
 HardDisk -X -1 -O:%FUZIXHDBOOT%.bin -I:%FUZIXHDBOOT%.hd -S:1 -N:1
 if errorlevel 1 pause && goto :eof
+
+if exist JV3DISK.EXE goto JV3DISK_OK
+echo :: Building JV3DISK.EXE ::
+call mk_JV3Disk.bat
+if errorlevel 1 pause && goto :eof
+:JV3DISK_OK
 
 ::JV3Disk -X -I:%FUZIX%.jv3 -O:%FUZIX%.img
 echo :: Extracting floppy boot sector from boot floppy image ::
@@ -43,9 +67,12 @@ set EQU=-e:%FUZIXBOOT%.equ
 :: dasm80 -b:%FUZIXBOOT%.bin -o:%FUZIXBOOT%.dasm %SCR% %EQU%
 :: if errorlevel 1 pause && goto :eof
 
-echo :: Getting ZMAC ::
 set ZMAC=zmac\zmac.exe
-if not exist %ZMAC% getzmac.sh
+if exist ZMAC goto ZMAC_OK
+echo :: Downloading ZMAC ::
+getzmac.sh
+if errorlevel 1 pause && goto :eof
+:ZMAC_OK
 
 echo :: Assembling primary bootstrap ::
 %ZMAC% %FUZIXHDBOOT%.asm --od build --oo cim,lst -c -s -g
@@ -66,6 +93,12 @@ if errorlevel 1 pause && goto :eof
 
 echo :: Copying new hard disk image for FreHD ::
 copy %FUZIXHDBOOT%.hd fuzix003
+
+if exist windows\trs80gp.exe goto TRS80GP_OK
+echo :: Downloading TRS80GP ::
+gettrs80gp.sh
+if errorlevel 1 pause && goto :eof
+:TRS80GP_OK
 
 echo :: Starting the emulator
 trs80gp_Fuzix_HD_HDBoot.bat

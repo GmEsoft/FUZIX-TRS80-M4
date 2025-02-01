@@ -30,6 +30,10 @@ To run the new Fuzix system in TRS80gp:
 
 - Run TRS80gp with the new hard disk image with `trs80gp_Fuzix_HD_HDBoot.bat` or by running the following command:
 `windows\trs80gp.exe -m4p -h0 fuzix003`
+  - At the `bootdev:` prompt, reply `0`.
+  - At the `login:` prompt, reply `root`.
+  - Do not forget to type the command `shutdown` before shutting the system down, otherwise a `fsck /dev/hdd0` will be forced.
+  
 
 
 Enjoy !

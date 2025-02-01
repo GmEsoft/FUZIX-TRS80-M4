@@ -12,11 +12,15 @@ call :del *.bin
 call :del *.obj
 call :del *.bak
 call :del *.out
-call :del *.hd????.hd
-call :del *.fix.hd
+call :del *.exe
+call :del *.zip
+call :del *.hd
+call :del *.jv3
 call :del std???.txt
 call :del fuzix???
 call :rmdir build
+call :rmdir zmac
+call :rmdir windows
 goto :eof
 
 :del
