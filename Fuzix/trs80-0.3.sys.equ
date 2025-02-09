@@ -1,0 +1,8 @@
+ORIGIN	EQU	00100H		;system origin
+XOTIR	EQU	ZEB7DH		;after OTIR
+ROUT1	EQU	ZEC8EH		;routine 1
+ROUT2	EQU	ZED57H		;routine 2
+XPUSH	EQU	ZED5FH		;PUSH to reorder
+XPOP	EQU	ZEDB3H		;POP to reorder
+JPOP	EQU	ZECE3H		;Jump to POP
+RESMAP	EQU	ZEBC2H		;Reset memory map

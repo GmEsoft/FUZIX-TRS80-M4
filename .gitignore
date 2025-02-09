@@ -1,10 +1,14 @@
 /Fuzix/build
 /Fuzix/zmac
+/Fuzix/trs80-0.3
+/Fuzix/trs80-0.4
+/Fuzix/trs80-0.5
 /Fuzix/*.hd
 /Fuzix/*.bin
 /Fuzix/*.obj
 /Fuzix/*.jv3
-/Fuzix/fuzix003
+/Fuzix/fuzix00?
 /Fuzix/*.zip
+/backup.bat
 *.exe
 *.bak
