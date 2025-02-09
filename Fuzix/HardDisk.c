@@ -7,7 +7,7 @@
 #include <fcntl.h>    // O_RDWR...
 #include <sys/stat.h> // S_IWRITE
 
-#define HARDDISK "Hard Disk Image Converter v0.2, (C) 2020-23 by GmEsoft"
+#define HARDDISK "Hard Disk Image Converter v0.3, (C) 2020-25 by GmEsoft"
 
 #define TRACE 0
 
@@ -193,6 +193,8 @@ void analyze( int infile )
 	}
 
 	printf( "Version:        %d.%d\n", buf[2] >> 4, buf[2] & 0x0F );
+	printf( "Autoboot:       %d\n", buf[0x08] );
+	printf( "OS Type:        %d\n", buf[0x0B] );
 	printf( "Offset:         %04X\n", offset );
 	printf( "Heads:          %d\n", sides );
 	printf( "Cylinders:      %d\n", tracks );

@@ -15,7 +15,7 @@ SYSCYL	EQU	202		;Cylinder holding the kernel binary
 
 	ORG	0000H
 
-	INCBIN	trs80-0.3.hdboot.bin	;original boot sector
+	INCBIN	trs80-0.4.hdboot.bin	;original boot sector
 
 	ORG	0000H
 
@@ -130,7 +130,7 @@ DMSG	LD	A,(HL)		;get char
 	LDI			;put on screen
 	JR	DMSG		;next char
 
-HELLO	DB	'Fuzix HDBoot v0.3.3'
+HELLO	DB	'Fuzix HDBoot v0.4.0'
 HELLOX	DB	0
 
 	ASSERT	$ <= 100H	;must be less than 100H

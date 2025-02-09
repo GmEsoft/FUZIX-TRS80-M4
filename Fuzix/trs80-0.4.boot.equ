@@ -1,0 +1,25 @@
+BOOT	EQU	00000H		;entry point 4300H - move to page 0
+RDSECT	EQU	00016H		;read sector in A to (HL)
+DELAY1	EQU	00023H
+WAIT1	EQU	0002BH
+LBYTES	EQU	00033H		;loop on bytes
+WAIT2	EQU	00039H
+HANG1	EQU	0004EH
+BOOT1	EQU	00050H		;entry point after move to page 0
+LCRTC	EQU	00059H		;load CRTC registers
+LTRACKS	EQU	00085H		;loop on tracks
+DELAY2	EQU	00098H
+WAIT3	EQU	0009AH
+WAIT4	EQU	000A4H
+HANG2	EQU	000BAH
+BEGTRK	EQU	000BCH		;begin track
+LSECTS	EQU	000C0H		;loop on sectors
+TRACK	EQU	000D3H		;track # (inc and get)
+SECT	EQU	000E2H		;sector # (inc and get)
+CRTC$	EQU	000E3H		;CRTC registers values end
+DMSGPC	EQU	000E4H		;Display message @ PC
+LDMSGPC	EQU	000E5H		;display message loop
+DMSGPCX	EQU	000EEH		;end display message
+ENDBOOT	EQU	000EFH		;finalize boot loader
+$SEC256	EQU	000F3H		;sector HDC port (C) and length (B)
+ORIGIN	EQU	00100H		;system origin

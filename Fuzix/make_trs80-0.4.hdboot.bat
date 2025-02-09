@@ -1,7 +1,7 @@
 @echo off
 
-set FUZIX=trs80-0.3
-set FUZIXHD=%FUZIX%.hd
+set FUZIX=trs80-0.4
+set FUZIXHD=hard4p-0
 set FUZIXBOOT=%FUZIX%.boot
 set FUZIXHDBOOT=%FUZIX%.hdboot
 set FUZIXHDSYS=%FUZIX%.sys
@@ -11,7 +11,7 @@ if not "%1" == "" set PAUSE=pause
 
 if exist %FUZIX%\%FUZIXHD% goto FUZIX_HD_OK
 echo :: Downloading %FUZIX ::
-getfuzix_03.sh
+getfuzix_04.sh
 if errorlevel 1 pause && goto :eof
 %PAUSE%
 :FUZIX_HD_OK
@@ -61,12 +61,12 @@ if errorlevel 1 pause && goto :eof
 
 ::JV3Disk -X -I:%FUZIX%.jv3 -O:%FUZIX%.img
 echo :: Extracting floppy boot sector from boot floppy image ::
-JV3Disk -X -I:%FUZIX%\%FUZIX%.jv3 -O:%FUZIXBOOT%.bin -S:1 -N:1
+JV3Disk -X -I:%FUZIX%\boot.jv3 -O:%FUZIXBOOT%.bin -S:1 -N:1
 %PAUSE%
 if errorlevel 1 pause && goto :eof
 
 echo :: Extracting secondary bootstrap from boot floppy image ::
-JV3Disk -X -I:%FUZIX%\%FUZIX%.jv3 -O:%FUZIX%.sys.bin -T:29
+JV3Disk -X -I:%FUZIX%\boot.jv3 -O:%FUZIX%.sys.bin -T:29
 %PAUSE%
 if errorlevel 1 pause && goto :eof
 
@@ -100,7 +100,7 @@ if errorlevel 1 pause && goto :eof
 %PAUSE%
 
 echo :: Copying new hard disk image for FreHD ::
-copy %FUZIXHDBOOT%.hd fuzix003
+copy %FUZIXHDBOOT%.hd fuzix004
 %PAUSE%
 
 if exist windows\trs80gp.exe goto TRS80GP_OK
@@ -112,4 +112,4 @@ if errorlevel 1 pause && goto :eof
 
 echo :: Starting the emulator
 %PAUSE%
-trs80gp_Fuzix_HD_HDBoot_03.bat
+trs80gp_Fuzix_HD_HDBoot_04.bat

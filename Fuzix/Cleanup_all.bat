@@ -21,6 +21,8 @@ call :del fuzix???
 call :rmdir build
 call :rmdir zmac
 call :rmdir windows
+call :rmdir trs80-0.3
+call :rmdir trs80-0.4
 goto :eof
 
 :del

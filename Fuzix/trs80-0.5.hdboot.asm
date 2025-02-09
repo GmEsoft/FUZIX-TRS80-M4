@@ -15,7 +15,7 @@ SYSCYL	EQU	202		;Cylinder holding the kernel binary
 
 	ORG	0000H
 
-	INCBIN	trs80-0.3.hdboot.bin	;original boot sector
+	INCBIN	trs80-0.5.hdboot.bin	;original boot sector
 
 	ORG	0000H
 
@@ -48,7 +48,7 @@ BOOT2	EXX
 	EX	DE,HL		;HL = ORIGIN
 	PUSH	HL		;push ret address
 
-	LD	DE,0C601H	;D = #sectors; E = sector
+	LD	DE,0D801H	;D = #sectors; E = sector
 	LD	BC,00C8H	;B = sec length (256); C = HDC data
 
 	XOR	A		;init HDC Drive & Head
@@ -130,7 +130,7 @@ DMSG	LD	A,(HL)		;get char
 	LDI			;put on screen
 	JR	DMSG		;next char
 
-HELLO	DB	'Fuzix HDBoot v0.3.3'
+HELLO	DB	'Fuzix HDBoot v0.5.0'
 HELLOX	DB	0
 
 	ASSERT	$ <= 100H	;must be less than 100H
